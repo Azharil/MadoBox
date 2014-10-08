@@ -1,7 +1,7 @@
 MadoStream
 ==========
 
-Anime Social Network CMS
+Anime Streaming and Social Network Script
 
 Demo: http://ganbatte.us
 
