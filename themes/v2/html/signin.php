@@ -61,7 +61,7 @@ font-size: 20px;"></i> Masuk dengan Facebook
 
 </div>
 
-                    <form class='form' method="post" action="/signin" style='margin-bottom: 0;' />
+                    <form class='form' method="post" action="" style='margin-bottom: 0;' />
                         <div class='control-group'>
                             <label class='control-label'>Nama Pengguna</label>
                              <div class='input-prepend controls'>

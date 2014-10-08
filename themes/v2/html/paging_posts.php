@@ -1,9 +1,16 @@
 <?php if( $D->num_pages > 1 ) { ?> 
-						<div class="paging">
-							<div class="paging2">
-								<span><?= $this->lang('paging_title') ?></span>
-								<?php if($D->pg > 3) { ?>
-								<a href="<?= $D->paging_url ?><?= $D->pg-1 ?>" class="pp"></a>
+</div>
+
+<style>
+.pagination {
+	margin:0px;
+
+}
+</style>
+					<div class='pagination' style=" padding-left: 7px;">
+					<ul>
+								<?php if($D->pg > 1) { ?>
+								<li><a href="<?= $D->paging_url ?><?= $D->pg-1 ?>">&lt;&lt;</a></li>
 								<?php } ?>
 								<!-- <span>...</span> -->
 								<?php 
@@ -20,13 +27,15 @@
 									$mx = $D->pg+2;
 								}
 								for($i=$mn; $i<=$mx; $i++) { ?>
-								<a href="<?= $D->paging_url ?><?= $i ?>" class="<?= $i==$D->pg?'onpage':'' ?>"><b><?= $i ?></b></a>
+								<li><a href="<?= $D->paging_url ?><?= $i ?>" class="<?= $i==$D->pg?'onpage':'' ?>"><b><?= $i ?></b></a></li>
 								<?php } ?>
 								<!-- <span>...</span> -->
-								<?php if($D->pg < $D->num_pages-2) { ?>
-								<a href="<?= $D->paging_url ?><?= $D->pg+1 ?>" class="np"></a>
+								<?php if($D->pg < $D->num_pages-0) { ?>
+								<li><a href="<?= $D->paging_url ?><?= $D->pg+1 ?>" >&gt;&gt;</a></li>
 								<?php } ?>
+
+								</ul>
 							</div>
-						</div>
+						
 						<div class="klear"></div>
 <?php } ?>

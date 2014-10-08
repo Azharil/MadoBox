@@ -39,7 +39,7 @@
                                     </div>
                                 </div>
 
-                                 <form method="post" action="<?= $C->SITE_URL ?>signup<?= ((isset($D->reg_id,$D->reg_key))?"/regid:". $D->reg_id . "/regkey:" . $D->reg_key:'') ?>">
+                                 <form method="post" action="<?= $C->SITE_URL ?>member/mendaftar<?= ((isset($D->reg_id,$D->reg_key))?"/regid:". $D->reg_id . "/regkey:" . $D->reg_key:'') ?>">
    
                                 <div class='step-content'>
                                     <hr class='hr-normal' />

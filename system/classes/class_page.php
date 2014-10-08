@@ -164,7 +164,7 @@
 				$this->params->group	= $g;
 			}
 			else {
-				$this->request[]	= 'home';
+				$this->request[]	= '404';
 				return;
 			}
 			unset($request[0]);
@@ -188,7 +188,7 @@
 		
 		private function _send_headers()
 		{
-			header('Cache-Control: no-store, no-cache, must-revalidate');
+			
 			header('Cache-Control: post-check=0, pre-check=0', FALSE);
 			header('Pragma: no-cache');
 			header('Last-Modified: '.gmdate('D, d M Y H:i:s'). ' GMT');

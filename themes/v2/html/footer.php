@@ -49,10 +49,10 @@
 
             <div class="col-sm-6 col-md-3">
               		<div id="recent-posts-3" class="widget widgetFooter widget_recent_entries">		<h4 class="widgettitle">Tentang</h4>		<ul>
-				<li><i class='icon-caret-right'></i> <a href="<?= $C->SITE_URL ?>contacts"><?= $this->lang('os_ftrlinks_sa_support') ?></a></li>
+				<li><i class='icon-caret-right'></i> <a href="<?= $C->SITE_URL ?>kontak"><?= $this->lang('os_ftrlinks_sa_support') ?></a></li>
 					<li><i class='icon-caret-right'></i> <a href="<?= $C->SITE_URL ?>faq"><?= $this->lang('os_ftrlinks_sa_faq') ?></a></li>
 					<?php if( isset($C->TERMSPAGE_ENABLED,$C->TERMSPAGE_CONTENT) && $C->TERMSPAGE_ENABLED==1 && !empty($C->TERMSPAGE_CONTENT) ) { ?>
-					<li><i class='icon-caret-right'></i> <a href="<?= $C->SITE_URL ?>terms"><?= $this->lang('os_ftrlinks_sa_terms') ?></a></li>
+					<li><i class='icon-caret-right'></i> <a href="<?= $C->SITE_URL ?>ketentuan"><?= $this->lang('os_ftrlinks_sa_terms') ?></a></li>
 					<?php } ?>
 					<li><i class='icon-caret-right'></i> <a href="/api">API Development</a></li>
 					<li><i class='icon-caret-right'></i> <a href="/fansubs">Pendaftaran Fansubs</a></li>
@@ -196,11 +196,10 @@
 
 <script src='<?= $C->CDN_URL ?>themes/<?= $C->THEME ?>/javascripts/lazy.js' type='text/javascript'></script>
 	<script type="text/javascript" charset="utf-8">
-  $(function() {
-     $("div.lazy").lazyload({
-       effect : "fadeIn"
-     });
-  });
+  $("img.lazy").lazyload({
+    effect : "fadeIn"
+});
+  
   </script>
   <script src='<?= $C->CDN_URL ?>themes/<?= $C->THEME ?>/javascripts/pace.js' type='text/javascript'></script>
   

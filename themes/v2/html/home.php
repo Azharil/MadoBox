@@ -44,7 +44,7 @@ color: #fff;
                 <!-- Carousel items -->
                 <div class='carousel-inner'>
                    
-                     <div class='active item'><img alt="460x200&amp;text=1" src="<?= $C->CDN_URL ?>/akame.jpg" />
+                     <div class='active item'><img class="lazy" alt="460x200&amp;text=1" data-original="<?= $C->CDN_URL ?>/akame.jpg" />
                         <div class="carousel-caption">
    
     <p style="color:#fff">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt</p>
@@ -170,6 +170,12 @@ color: #fff;
 						
 						<?php } ?>
 					</div>
+
+
+
+          
+
+          
 <?php
 	
 	$this->load_template('footer.php');

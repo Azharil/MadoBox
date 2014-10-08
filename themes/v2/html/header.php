@@ -230,7 +230,7 @@
 
 <style>
 
-<?= in_array( $this->request[0], array('signup', 'signin') )?' body {background-image: url('. $C->CDN_URL.'/themes/v2/images/bg.png);} ':'' ?>
+<?= in_array( $this->request[0], array('member') )?' body {background-image: url('. $C->CDN_URL.'/themes/v2/images/bg.png);} ':'' ?>
 <?= in_array( $this->request[0], array('404', 'maintenance') )?' body {background:  url('.$C->CDN_URL.'/themes/v2/render.png) no-repeat 250px 30px, url(/themes/v2/images/bg.png););} ':'' ?>
 
 
@@ -261,6 +261,10 @@ function scrollToTop() {
     $('html, body').animate({scrollTop: offsetTop}, 500, 'linear');
 }
 </script>
+
+
+ <script src='<?= $C->CDN_URL ?>themes/<?= $C->THEME ?>/javascripts/inside_autocomplete.js' type='text/javascript'></script>
+
 	</head>
 	
 <!-- Badan Website -->
@@ -274,7 +278,7 @@ line-height: 47px;"></i>
 <header>
 
 <!-- Mulai Navigasi -->		
-    
+
     <div class='navbar navbar-default navbar-fixed-top'>
         <div class='navbar-inner'>
         	 <div class="container">
@@ -315,9 +319,10 @@ line-height: 47px;"></i>
 
 
 							</li>
+							
 							<li class="dropdown <?= $this->request[0]=='fap'?'dark':'' ?>"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="icon-chevron-sign-down"></span> Lain <span class="caret"></span></a>
 								<ul class="dropdown-menu" role="menu">
-               							<li class="<?= $this->request[0]=='leaders'?'dark':'' ?>"><a href="<?= $C->SITE_URL ?>leaders" class="<?= $this->request[0]=='leaders'?'onnettab':'' ?>"><span class="icon-star"></span> Top 10</a></li>
+               							<li class="<?= $this->request[0]=='populer'?'dark':'' ?>"><a href="<?= $C->SITE_URL ?>populer" class="<?= $this->request[0]=='leaders'?'onnettab':'' ?>"><span class="icon-star"></span> Top 10</a></li>
 
                 <li><a href="<?= $C->SITE_URL ?>fap"><span class="icon-warning-sign"></span> Fap</a></li>
                 <?php if( $this->user->is_logged && $this->user->info->is_network_admin == 1 ) { ?>
@@ -365,13 +370,15 @@ line-height: 47px;"></i>
 							<?php } else { ?>
 								<ul class='nav pull-right'>
 								<li class="dropdown dark"><a href='#' class="dropdown-toggle" data-toggle="dropdown"><span class="icon-check"> </span>Masuk?</a>
+
+
 								  <ul class="dropdown-menu" role="menu">
-						     	<li><a href="<?= $C->SITE_URL ?>signin"><i class="icon-user"></i> Sudah punya akun</a></li>
+						     	<li><a href="<?= $C->SITE_URL ?>member/masuk"><i class="icon-user"></i> Sudah punya akun</a></li>
 
 						
 								 <li class='divider'></li>
 
-								<li><a href="<?= $C->SITE_URL ?>signup"><i class="icon-signout"></i> Buat akun baru</a></li>
+								<li><a href="<?= $C->SITE_URL ?>member/mendaftar"><i class="icon-signout"></i> Buat akun baru</a></li>
 							</ul>
 						</li>
 </ul>

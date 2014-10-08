@@ -1,7 +1,7 @@
 <?php
 	
 	if( !$this->user->is_logged ) {
-		$this->redirect('signin');
+		$this->redirect('member/masuk');
 	}
 	if( !$this->network->id ) {
 		$this->redirect('home');

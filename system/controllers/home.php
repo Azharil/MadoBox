@@ -53,116 +53,122 @@
 	
 	
 	
+	$C->PAGING_NUM_POSTS = 4;
 	
-	
-	
-	if(isset($C->PROTECT_OUTSIDE_PAGES) && !$C->PROTECT_OUTSIDE_PAGES){
 	
 	
 
 	
+
+	
+
+			
+				$q1	= 'SELECT COUNT(*) FROM posts p WHERE p.user_id<>0 AND p.api_id<>2 AND p.api_id<>6 ';
+				$q2	= 'SELECT p.*, "public" AS `type` FROM posts p WHERE p.user_id<>0 AND p.api_id<>2 AND p.api_id<>6 AND p.group_id<>0  ORDER BY p.id DESC ';
+					
+			
+		
 	
 	
-	 $C->PAGING_NUM_POSTS = 15;
+	$D->num_results	= 0;
+	$D->num_pages	= 0;
+	$D->pg		= 1;
+	$D->posts_html	= '';
 	
-	
-		$filters	= array('all', 'videos', 'images', 'links', 'files');
-		$filter	= 'all';
-		if( $this->param('filter') && in_array($this->param('filter'), $filters) ) {
-			$filter	= $this->param('filter');
+	if( $q1!='' && $q2!='' ) {
+		$D->num_results	= $db2->fetch_field($q1);
+		$D->num_pages	= ceil($D->num_results / $C->PAGING_NUM_POSTS);
+		$D->pg	= $this->param('hal') ? intval($this->param('hal')) : 1;
+		$D->pg	= min($D->pg, $D->num_pages);
+		$D->pg	= max($D->pg, 1);
+		$from	= ($D->pg - 1) * $C->PAGING_NUM_POSTS;
+		$res	= $db2->query($q2.'LIMIT '.$from.', '.$C->PAGING_NUM_POSTS);
+		
+		$tmpposts	= array();
+		$tmpids	= array();
+		$postusrs	= array();
+		$buff 	= NULL; 	
+		while($obj = $db2->fetch_object($res)) {
+			$buff = new post($obj->type, FALSE, $obj);
+			if( $buff->error ) {
+				continue;
+			}
+			$tmpposts[] = $buff;
+			if( $this->param('from')=='ajax' && $this->param('onlypost')!="" && $this->param('onlypost')!=$buff->post_tmp_id ) {
+				continue;
+			}
+			$tmpids[]	= $buff->post_tmp_id;
+			$postusrs[]	= $buff->post_user->id;
 		}
-		$at_tmp	= array('videos'=>'videoembed', 'images'=>'image', 'links'=>'link', 'files'=>'file');
+		unset($buff);
+		$postusrs = array_unique($postusrs);
 		
-		$not_in_groups	= array();
-		$not_in_groups 	= $this->network->get_private_groups_ids();
-		$not_in_groups	= count($not_in_groups)>0 ? ('AND p.group_id NOT IN('.implode(', ', $not_in_groups).')') : '';
-		
-		$without_users = array();
-		$without_users = $this->network->get_post_protected_user_ids();
-		$without_users = count($without_users)>0 ? (' AND (p.group_id>0 OR p.user_id NOT IN('.implode(', ', $without_users).'))') : '';
-		
-		if($filter == 'all') {
-			$q1	= '';
-			$q2	= 'SELECT p.*, "public" AS `type` FROM posts p WHERE p.user_id<>0 AND p.api_id<>2 AND p.api_id<>6 AND p.group_id<>0 '.$not_in_groups.$without_users.' ORDER BY p.id DESC LIMIT 0, '.$C->PAGING_NUM_POSTS;
-		}
-		else {
-			$q1	= '';
-			$q2	= 'SELECT p.*, "public" AS `type` FROM posts p, posts_attachments a WHERE p.id=a.post_id AND p.user_id<>0 AND p.api_id<>2 AND p.api_id<>6 '.$not_in_groups.$without_users.' AND a.type="'.$at_tmp[$filter].'" ORDER BY p.id DESC LIMIT 0, '.$C->PAGING_NUM_POSTS;
-		}
-		
-		$D->filter		= $filter;
-		$D->num_results	= 0;
-		$D->num_pages	= 1;
-		$D->pg		= 1;
-		$D->posts_html	= '';
-		
-		$D->num_results	= $C->PAGING_NUM_POSTS; 
-		$res	= $db2->query($q2);
+		post::preload_num_new_comments($tmpids);
 		ob_start();
-		if($D->num_results>0){
-			while($obj = $db2->fetch_object($res)) {
-				$D->p	= new post($obj->type, FALSE, $obj);
-				if( $D->p->error ) {
-					continue;
-				}
-				if( $this->param('from')=='ajax' && $this->param('onlypost')!="" && $this->param('onlypost')!=$D->p->post_tmp_id ) {
-					continue;
-				}
-				if( $this->param('from')=='ajax' && $this->param('opencomments')!="" && $this->param('opencomments')==$D->p->post_tmp_id ) {
-					$D->p->comments_open	= TRUE;
-				}
-				$D->post_show_slow	= FALSE;
-				if( $this->param('from')=='ajax' && isset($_POST['lastpostdate']) && $D->p->post_date>intval($_POST['lastpostdate']) ) {
-					$D->post_show_slow	= TRUE;
-				}
-				$D->parsedpost_attlink_maxlen	= 52;
-				$D->parsedpost_attfile_maxlen	= 48;
-				if( isset($D->p->post_attached['image']) ) {
-					$D->parsedpost_attlink_maxlen	-= 10;
-					$D->parsedpost_attfile_maxlen	-= 12;
-				}
-				if( isset($D->p->post_attached['videoembed']) ) {
-					$D->parsedpost_attlink_maxlen	-= 10;
-					$D->parsedpost_attfile_maxlen	-= 12;
-				}
-				
-				$D->show_reshared_design = ($D->p->post_resharesnum > 0);
-				
-				$this->load_template('single_post_anime.php');
+		
+		
+		
+		
+		foreach($tmpposts as $tmp) {
+			$D->p	= $tmp;
+			$D->post_show_slow	= FALSE;
+			if( $this->param('from')=='ajax' && isset($_POST['lastpostdate']) && $D->p->post_date>intval($_POST['lastpostdate']) ) {
+				$D->post_show_slow	= TRUE;
 			}
-			unset($D->p);
-			$D->paging_url	= $C->SITE_URL.'home/filter:'.$filter.'/pg:';
-			if( $D->num_pages>1 && !$this->param('onlypost') ) {
-				$this->load_template('paging_posts.php');
-			}
-		}else{
-			$D->noposts_box_title	= $this->lang('os_noposts_ttl'); 
-			
-			if($filter == 'all'){ 
-				$D->noposts_box_text	= $this->lang('os_noposts_unreg_mgs');
-			}else{
-				$D->noposts_box_text	= $this->lang('os_noposts_match_mgs');
+			if( $this->param('from')=='ajax' && $this->param('onlypost')!="" && $this->param('onlypost')!=$D->p->post_tmp_id ) {
+				continue;
 			}
 			
-			$this->load_template('noposts_box.php');
+		
+			
+			$D->parsedpost_attlink_maxlen	= 52;
+			$D->parsedpost_attfile_maxlen	= 48;
+			if( isset($D->p->post_attached['image']) ) {
+				$D->parsedpost_attlink_maxlen	-= 10;
+				$D->parsedpost_attfile_maxlen	-= 12;
+			}
+			if( isset($D->p->post_attached['videoembed']) ) {
+				$D->parsedpost_attlink_maxlen	-= 10;
+				$D->parsedpost_attfile_maxlen	-= 12;
+			}
+			$D->show_reshared_design = FALSE;
+			
+		
+			
+			$this->load_template('single_post_anime.php');
 		}
-		unset($D->p);
+		unset($D->p, $tmp, $tmpposts, $tmpids, $right_post_type);
+		
+		
+		
+			$D->paging_url	= $C->SITE_URL.'home/hal:';
+		
+		if( $D->num_pages>1 && !$this->param('onlypost') ) {
+			$this->load_template('paging_posts.php');
+		}
 		$D->posts_html	= ob_get_contents();
 		ob_end_clean();
-		
-		if( $this->param('from') == 'ajax' )
-		{
-			echo 'OK:';
-			echo $D->posts_html;
-			exit;
-		}
-		
+	}
+	
+	
+	if( $this->param('from') == 'ajax' )
+	{
+		echo 'OK:';
+		echo $D->posts_html;
+		exit;
+	}
+	
+	$D->menu_groups	= $this->user->get_top_groups(5);
+	
+	
+	
+	
 		$D->last_online	= array();
 		$D->last_online	= $this->network->get_online_users();
 		
 		$D->post_tags	= array();
 		$D->post_tags	= $this->network->get_recent_posttags();
-	}
+	
 			$D->num_posts	= intval($db2->fetch_field('SELECT COUNT(id) FROM posts WHERE user_id<>0 AND api_id<>2 AND group_id<>0'));
 			$D->num_anime	= intval($db2->fetch_field('SELECT COUNT(id) FROM groups'));
 
@@ -187,13 +193,7 @@
 	if( $this->param('tab') && in_array($this->param('tab'), $tabs) ) {
 		$D->tab	= $this->param('tab');
 	}
-	$D->i_am_network_admin	= ( $this->user->is_logged && $this->user->info->is_network_admin > 0 );	
 	
-	$not_in_groups	= array();
-	if( !$D->i_am_network_admin ) {
-		$not_in_groups 	= array_diff( $this->network->get_private_groups_ids(), $this->user->get_my_private_groups_ids() );
-	}
-	$not_in_groups	= count($not_in_groups)>0 ? ('AND id NOT IN('.implode(', ', $not_in_groups).')') : '';
 	
 	$D->num_results	= 0;
 	$D->num_pages	= 0;
@@ -215,14 +215,14 @@
 	$group_ids 		= array();
 	if( $D->tab == 'all' )
 	{
-		$D->num_results	= $db2->fetch_field('SELECT COUNT(*) FROM groups WHERE 1 '.$not_in_groups);
+		$D->num_results	= $db2->fetch_field('SELECT COUNT(*) FROM groups WHERE 1');
 		$D->num_pages	= ceil($D->num_results / $C->PAGING_NUM_GROUPS);
-		$D->pg	= $this->param('pg') ? intval($this->param('pg')) : 1;
+		$D->pg	= $this->param('hal') ? intval($this->param('hal')) : 1;
 		$D->pg	= min($D->pg, $D->num_pages);
 		$D->pg	= max($D->pg, 1);
 		$from	=  ($this->user->is_logged)? (($D->pg - 1) * $C->PAGING_NUM_GROUPS) : 0;
 
-		$db2->query('SELECT * FROM groups WHERE 1 '.$not_in_groups.' ORDER BY '.$sql_orderby[$D->orderby].' LIMIT '.$from.', '.$C->PAGING_NUM_GROUPS);
+		$db2->query('SELECT * FROM groups WHERE 1  ORDER BY '.$sql_orderby[$D->orderby].' LIMIT '.$from.', '.$C->PAGING_NUM_GROUPS);
 		while($o = $db2->fetch_object()) {
 			$selected_groups[] = generate_group_info_obj($o);
 			$group_ids[] 	 = $o->id; 

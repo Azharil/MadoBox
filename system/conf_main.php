@@ -15,9 +15,9 @@
 	// MySQL SETTINGS
 	// 
 		$C->DB_HOST	= 'localhost';
-		$C->DB_USER	= '';
+		$C->DB_USER	= 'root';
 		$C->DB_PASS	= '';
-		$C->DB_NAME	= '';
+		$C->DB_NAME	= 'tetes';
 		$C->DB_MYEXT = 'mysqli'; // 'mysqli' or 'mysql'
 	// 
 	
